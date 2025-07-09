@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Form - Component (Dropdown)</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Alpine.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+</head>
+
+<body class="bg-black text-white min-h-screen flex justify-center font-sans">
+  <div x-data="dropdown" class="w-full px-10 rounded-md">
+    <h1 x-text="title" class="text-4xl font-bold my-10 text-center"></h1>
+    <div class="dropdown bg-[#18181b] w-full flex justify-center flex-wrap py-5">
+      <div :class="[errMsg ? 'border-red-500':'', inputDisabled ? 'bg-[#52525b]' : '']"
+        class="input relative flex justify-center align-items-center cursor-pointer border border-[#52525b] rounded-md">
+        <!-- Dropdown input trigger -->
+        <input @click="toggleDropdown" type="text" placeholder="Select a City" :value="selectedOption"
+          :readonly="!editable" :disabled="inputDisabled"
+          :class="inputDisabled ? 'bg-[#2b2b34] cursor-not-allowed' : 'bg-black cursor-pointer'"
+          class="::placeholder:text-[#818189] text-white font-semibold w-72 h-10 rounded-md py-[7px] px-[10.5px]">
+
+        <!-- Dropdown icon -->
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+          class="size-6 absolute right-2 top-1/2 -translate-y-1/2 text-[#818189]">
+          <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+        </svg>
+        <svg x-show="clearIcon" @click="clearData" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+          stroke-width="1.5" stroke="currentColor"
+          class="size-6 absolute right-10 top-1/2 -translate-y-1/2 text-[#818189]">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+        </svg>
+
+        <!-- Dropdown options -->
+        <div x-show="dropdownOpen" x-transition @click.outside="dropdownOpen = false" class="options absolute bg-[#18181b] top-12 border border-[#52525b] rounded-md w-96 ml-[88px] max-h-56 overflow-y-auto [&::-webkit-scrollbar]:w-[6px]
+            [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:bg-gray-300
+            dark:[&::-webkit-scrollbar-track]:bg-neutral-700 dark:[&::-webkit-scrollbar-thumb]:bg-neutral-400 z-10">
+          <div class="p-3 relative" x-show="searchFunction">
+            <input @input="searchFilter"
+              class="::placeholder:text-[#818189] bg-black text-white font-semibold w-full h-10 border border-[#52525b] rounded-md py-[7px] px-[10.5px]"
+              type="text" name="" id="">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+              stroke="currentColor" class="size-6 absolute right-5 top-5">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+            </svg>
+
+          </div>
+          <template x-for="(label, index) in filteredData" :key="index">
+            <p x-text="label.option" @click="selectOption(label.option, index)"
+              :class="{'bg-white text-black': label.selected}"
+              class="px-[10.5px] py-[7px] m-1 hover:bg-white hover:text-black rounded-md font-semibold transition-all duration-300 cursor-pointer">
+            </p>
+          </template>
+        </div>
+      </div>
+      <div class="flex flex-wrap justify-center space-y-5 w-full" x-show="enableNotification">
+        <p x-show="errMsg" class="text-red-500  text-center font-semibold w-full">Selection is required!</p>
+        <button @click="popup"
+          class="px-5 py-1 bg-[#27272A] text-[#E4E4E7] font-semibold rounded-md hover:bg-white/10 transition">Submit</button>
+      </div>
+    </div>
+    <!-- Notification Area -->
+    <div x-show="enableNotification" x-cloak>
+      <template x-for="(notification, index) in notifications" :key="index">
+        <div x-show="notification.show" x-transition
+          class="absolute flex justify-between items-center rounded-md py-3 px-4 right-10 bg-green-500/30 backdrop-blur-md border border-green-300 text-green-400 max-w-72 w-full shadow-lg"
+          :style="'top: calc(3.5rem * ' + (index + 1) + '); z-index: 999;'">
+          <div class="font-semibold flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+              stroke="currentColor" class="size-5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+            </svg>
+            <span x-text="notification.msg"></span>
+          </div>
+          <button @click="removeNotification(index)"
+            class="flex items-center justify-center -mt-2 top-2 w-7 h-7 p-1 rounded-full hover:bg-white/10 transition-all">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+              stroke="currentColor" class="w-5 h-5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+      </template>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener("alpine:init", () => {
+      Alpine.data("dropdown", () => ({
+        title: "Dropdown Component",
+        dropdownOpen: false,
+        enableNotification: true,
+        errMsg: false,
+        editable: false,
+        clearIcon: false,
+        inputDisabled: false,
+        searchFunction: false,
+        notifications: [],
+        selectedOption: '',
+        filteredData: [],
+        optionList: [
+          { option: "Afghanistan", selected: false },
+          { option: "Albania", selected: false },
+          { option: "Algeria", selected: false },
+          { option: "Bahrain", selected: false },
+          { option: "Bangladesh", selected: false },
+          { option: "Barbados", selected: false },
+          { option: "Belarus", selected: false },
+          { option: "Belgium", selected: false },
+          { option: "Benin", selected: false },
+          { option: "Bhutan", selected: false },
+          { option: "Bolivia", selected: false },
+          { option: "Bosnia and Herzegovina", selected: false },
+          { option: "Botswana", selected: false },
+          { option: "Brazil", selected: false },
+          { option: "Brunei", selected: false },
+          { option: "Bulgaria", selected: false },
+          { option: "Burkina Faso", selected: false },
+          { option: "Burundi", selected: false },
+          { option: "Cabo Verde", selected: false },
+          { option: "Cambodia", selected: false },
+          { option: "Cameroon", selected: false },
+          { option: "France", selected: false },
+          { option: "Guinea-Bissau", selected: false },
+          { option: "Guyana", selected: false },
+          { option: "Haiti", selected: false },
+          { option: "Holy See", selected: false },
+          { option: "Malaysia", selected: false },
+          { option: "Maldives", selected: false },
+
+        ],
+
+
+        init() {
+          this.filteredData = this.optionList
+        },
+
+        toggleDropdown() {
+          this.dropdownOpen = !this.dropdownOpen;
+        },
+
+        selectOption(option, index) {
+          this.optionList.forEach((opt) => (opt.selected = false));
+          this.optionList[index].selected = true;
+          this.selectedOption = option;
+          this.dropdownOpen = false;
+          this.errMsg = false
+        },
+
+        searchFilter(event) {
+          const query = event.target.value.toLowerCase().trim();
+          if (!query) {
+            this.filteredData = this.optionList
+          } else {
+            this.filteredData = this.optionList.filter((item) =>
+              item.option.toLowerCase().includes(query))
+          }
+        },
+
+        clearData(option, index) {
+          this.filteredData = this.optionList
+          this.optionList.forEach((opt) => (opt.selected = false));
+          this.selectedOption = ''
+        },
+
+        popup() {
+          // Check if selectedOption exists in the optionList
+          const isValidOption = this.optionList.some(
+            (option) => option.option === this.selectedOption
+          );
+
+          if (!isValidOption) {
+            this.errMsg = true; // Show error if invalid
+          } else {
+            const newNotification = {
+              msg: "Form is submitted!",
+              show: true,
+            };
+            this.notifications.push(newNotification);
+            setTimeout(() => {
+              this.removeNotification(this.notifications.indexOf(newNotification));
+            }, 3000);
+            this.errMsg = false;
+          }
+        },
+
+
+        removeNotification(index) {
+          if (index > -1) {
+            this.notifications.splice(index, 1)
+          }
+        }
+
+      }))
+    })
+  </script>
+</body>
+
+</html>

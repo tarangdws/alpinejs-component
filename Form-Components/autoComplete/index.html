@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Character Auto Complete</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</head>
+
+<body class="bg-[#18181b] text-white">
+  <div x-data="autoComplete" class="text-center p-10 flex justify-center items-center flex-col relative">
+    <div
+      class="w-56 h-auto flex  gap-2 overflow-x-hidden items-center bg-[#09090B] border border-[#52525b] rounded-md px-3 py-2 relative"
+      :class="multipleSelection === true ||( withTypeHead === true || withoutTypeHead === true )? 'w-1/2 flex-wrap' : ''">
+      <!-- Chips -->
+      <template x-if="multipleSelection && withTypeHead && selectedItems.length > 0">
+        <template x-for="item in selectedItems" :key="item">
+          <div class="flex items-center bg-[#27272a] text-white text-sm rounded-md px-2 py-1 gap-2 ">
+            <span x-text="item"></span>
+            <button @click="removeItem(item)"
+              class="flex items-center justify-center rounded-full hover:bg-white/10 transition-all">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                stroke="currentColor" class="w-4 h-4">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+        </template>
+      </template>
+
+
+      <!-- Typeahead Input -->
+      <input type="text" :disabled="disableInput" :class="{
+                 'rounded-none': multipleSelection && withTypeHead,
+                 'rounded-md': !(multipleSelection && withTypeHead),
+             }" class="flex-1 bg-[#09090B] outline-0 font-semibold border-0 focus:ring-0 text-sm" x-model="searchQuery"
+        @input="searchFilter" @keydown.backspace="handleBackspace" @keydown.enter="addItemOnEnter" />
+
+
+
+      <button x-show="dropdown" @click="showAllItems" :disabled="disableInput"
+        class="bg-[#27272a] absolute right-0 border-0 h-full hover:bg-[#3f3f46] transition duration-300 text-white min-w-10 flex justify-center items-center rounded-r-md border border-[#52525b] border-l-0">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+          class="size-6">
+          <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+        </svg>
+      </button>
+    </div>
+
+    <template x-if="filteredData.length > 0">
+      <div class=" z-20 w-56 mx-auto rounded-md max-h-52 overflow-y-auto absolute top-[75%] [&::-webkit-scrollbar]:w-1
+        [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:bg-gray-300
+        dark:[&::-webkit-scrollbar-track]:bg-neutral-700 dark:[&::-webkit-scrollbar-thumb]:bg-neutral-400 border
+        border-[#52525b] bg-[#27272a]">
+        <template x-for="item in filteredData" :key="item.id">
+          <p @click="selectItem(item)"
+            :class="item.click && dropdown === true ? 'bg-white text-black hover:bg-white/70': ''"
+            class="py-1 px-5 m-1 rounded-md text-left flex items-center hover:bg-[#3f3f46] cursor-pointer transition font-semibold">
+            <span x-text="item.color"></span>
+          </p>
+        </template>
+      </div>
+    </template>
+
+    <template x-if="searchQuery.trim() && filteredData.length === 0 && noResultFound">
+      <p x-show="noResult"
+        class="absolute top-[70%] left-1/2 translate-x-[-50%] z-20 w-56 h-10 mx-auto rounded-md bg-[#27272a] py-1 px-5 m-1 text-left flex items-center transition font-semibold text-center"
+        :class="multipleSelection  && (withTypeHead || withoutTypeHead) ? 'w-[96%] translate-x-[-50%]' : ''">
+        No results found
+      </p>
+    </template>
+
+
+    <button @click="popup" x-show="enableNotification"
+      class="absolute  top-[70%] left-1/2 translate-x-[-49%] w-56 h-10 my-1 mx-auto rounded-md bg-[#27272a] hover:bg-[#3f3f46] transition duration-300 text-white font-semibold"
+      :class="multipleSelection ? 'hidden' : ''">
+      Submit
+    </button>
+
+    <!-- Multiple Notifications -->
+    <div x-show="enableNotification">
+      <template x-for="(notification, index) in notifications" :key="index">
+        <div x-show="notification.show" x-transition class="absolute flex justify-between items-center rounded-md py-3 px-4 right-10 
+                bg-green-500/30 backdrop-blur-md border border-green-300 text-green-400 max-w-72 w-full shadow-lg"
+          :style="'top: calc(3.5rem * ' + (index + 1) + ')'">
+          <div class="font-semibold flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+              stroke="currentColor" class="size-5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+            </svg>
+            <span x-text="notification.msg"></span>
+          </div>
+          <button @click="removeNotification(index)"
+            class="flex items-center justify-center -mt-2 top-2 w-7 h-7 p-1 rounded-full hover:bg-white/10 transition-all">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+              stroke="currentColor" class="w-5 h-5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+      </template>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('alpine:init', () => {
+      Alpine.data('autoComplete', () => ({
+        searchQuery: " ",
+        noResult: true,
+        enableNotification: true,
+        multipleSelection: true,
+        dropdown: true,
+        disableInput: false,
+        noResultFound: false,
+        withTypeHead: true,
+        withoutTypeHead: true,
+        notifications: [],
+        filteredData: [],
+        selectedItems: [],
+
+        data: [
+          { id: 1, color: "Mauv", click: false },
+          { id: 2, color: "Indigo", click: false },
+          { id: 3, color: "Fuscia", click: false },
+          { id: 4, color: "Green", click: false },
+          { id: 5, color: "Orange", click: false },
+          { id: 6, color: "Aquamarine", click: false },
+          { id: 7, color: "Pink", click: false },
+          { id: 8, color: "Turquoise", click: false },
+          { id: 9, color: "Red", click: false },
+          { id: 10, color: "Violet", click: false },
+          { id: 11, color: "Blue", click: false },
+          { id: 12, color: "Puce", click: false },
+          { id: 13, color: "Crimson", click: false },
+          { id: 14, color: "Purple", click: false },
+          { id: 15, color: "Yellow", click: false },
+          { id: 16, color: "Cyan", click: false },
+          { id: 17, color: "Magenta", click: false },
+          { id: 18, color: "Beige", click: false },
+          { id: 19, color: "Lime", click: false },
+          { id: 20, color: "Teal", click: false }
+        ],
+
+        searchFilter() {
+          const query = this.searchQuery.toLowerCase().trim();
+
+          if (!query) {
+            this.filteredData = [];
+            this.noResultFound = false;
+          } else {
+            this.filteredData = this.data
+              .filter(
+                item =>
+                  item.color.toLowerCase().includes(query) &&
+                  !this.selectedItems.includes(item.color)
+              )
+              .sort((a, b) => a.color.localeCompare(b.color));
+
+            this.noResultFound = this.filteredData.length === 0;
+          }
+        },
+
+
+
+        selectItem(item) {
+          if (this.multipleSelection && this.withTypeHead) {
+            item.click = !item.click;
+
+            if (item.click) {
+              if (!this.selectedItems.includes(item.color)) {
+                this.selectedItems.push(item.color);
+              }
+            } else {
+              this.selectedItems = this.selectedItems.filter(c => c !== item.color);
+            }
+            this.searchQuery = ""
+          } else {
+            this.data.forEach(i => (i.click = false));
+            item.click = true;
+            this.selectedItems = [item.color];
+            this.searchQuery = item.color;
+          }
+          this.filteredData = [];
+
+        },
+
+
+
+        removeItem(item) {
+          this.selectedItems = this.selectedItems.filter(i => i !== item);
+
+          const itemToUnselect = this.data.find(i => i.color === item);
+          if (itemToUnselect) itemToUnselect.click = false;
+
+          this.searchQuery = '';
+          this.filteredData = [];
+          this.noResultFound = false;
+        },
+
+
+
+        popup() {
+          if (this.searchQuery.trim() !== '') {
+            const newNotification = {
+              msg: 'Form is submitted!',
+              show: true,
+            };
+            this.notifications.push(newNotification);
+            setTimeout(() => {
+              this.removeNotification(this.notifications.indexOf(newNotification));
+            }, 3000);
+          }
+        },
+
+        removeNotification(index) {
+          if (index > -1) {
+            this.notifications.splice(index, 1);
+          }
+        },
+
+        showAllItems() {
+          if (this.filteredData.length === this.data.length) {
+            this.filteredData = [];
+          } else {
+            this.filteredData = [...this.data];
+            this.noResultFound = this.filteredData.length === 0;
+          }
+        },
+
+        handleBackspace() {
+          if (this.searchQuery.trim() === '' && this.selectedItems.length > 0) {
+            const lastItem = this.selectedItems.pop();
+            const itemToUnselect = this.data.find(i => i.color === lastItem);
+            if (itemToUnselect) {
+              itemToUnselect.click = false;
+            }
+
+            this.filteredData = [];
+            this.noResultFound = false;
+          }
+        },
+
+        addItemOnEnter() {
+          const trimmedQuery = this.searchQuery.trim();
+          if (trimmedQuery && !this.selectedItems.includes(trimmedQuery)) {
+            this.selectedItems.push(trimmedQuery);
+
+            if (!this.data.some(item => item.color === trimmedQuery)) {
+              this.data.push({ id: this.data.length + 1, color: trimmedQuery, click: false });
+            }
+
+            this.searchQuery = '';
+            this.filteredData = [];
+            this.noResultFound = false;
+          }
+        }
+
+
+
+      }));
+    });
+
+  </script>
+</body>
+
+</html>
