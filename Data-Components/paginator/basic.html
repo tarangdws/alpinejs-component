@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Paginator</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</head>
+
+<body>
+  <div class="bg-[#18181b] text-[#a1a1aa] text-sm p-7" x-data="paginator">
+    <div class="flex justify-center items-center space-x-2">
+      <div class="btns flex">
+        <button @click="prevSet"
+          class="flex justify-center items-center w-8 h-8 rounded-full hover:bg-white/10 hover:text-white/70 text-sm">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 30 30" stroke-width="2" stroke="currentColor"
+            class="size-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="m18.75 4.5-7.5 7.5 7.5 7.5m-6-15L5.25 12l7.5 7.5" />
+          </svg>
+        </button>
+        <button @click="prevPage"
+          class="flex justify-center items-center w-8 h-8 rounded-full hover:bg-white/10 hover:text-white/70 text-sm">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 30 30" stroke-width="2" stroke="currentColor"
+            class="size-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+          </svg>
+        </button>
+      </div>
+
+      <template x-for="page in visiblePages" :key="page">
+        <div class="numbers">
+          <button @click="setCurrentPage(page)"
+            class="w-8 h-8 text-center rounded-full hover:bg-white hover:text-black transition-all text-sm font-semibold"
+            x-text="page" :class="page === currPage ? 'bg-white text-black' : ''">
+          </button>
+        </div>
+      </template>
+
+      <div class="btns flex">
+        <button @click="nextPage"
+          class="flex justify-center items-center w-8 h-8 rounded-full hover:bg-white/10 hover:text-white/70 text-sm">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 30 30" stroke-width="2" stroke="currentColor"
+            class="size-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+          </svg>
+        </button>
+        <button @click="nextSet"
+          class="flex justify-center items-center w-8 h-8 rounded-full hover:bg-white/10 hover:text-white/70 text-sm">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 30 30" stroke-width="2" stroke="currentColor"
+            class="size-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="m5.25 4.5 7.5 7.5-7.5 7.5m6-15 7.5 7.5-7.5 7.5" />
+          </svg>
+        </button>
+      </div>
+
+      <select  x-model="pageSize" x-show="basic" :class="{'hidden' ? !basic}" class="w-[70px] h-8 bg-black text-white border border-[#52525b] rounded-md outline-0"
+        @change="updatePagination">
+        <option value="10">10</option>
+        <option value="20">20</option>
+        <option value="30">30</option>
+      </select>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('alpine:init', () => {
+      Alpine.data('paginator', () => ({
+        basic: true,
+        totalRecords: 120,
+        pageSize: 10,
+        maxVisiblePage: 5,
+        currPage: 1,
+
+        get totalPages() {
+          return Math.ceil(this.totalRecords / this.pageSize);
+        },
+
+        get visiblePages() {
+          const half = Math.floor(this.maxVisiblePage / 2);
+          let start = Math.max(this.currPage - half, 1);
+          let end = start + this.maxVisiblePage - 1;
+
+          if (end > this.totalPages) {
+            end = this.totalPages;
+            start = Math.max(end - this.maxVisiblePage + 1, 1);
+          }
+
+          return Array.from({ length: end - start + 1 }, (_, i) => start + i);
+        },
+
+        setCurrentPage(page) {
+          this.currPage = page;
+        },
+
+        prevPage() {
+          if (this.currPage > 1) this.currPage--;
+        },
+
+        nextPage() {
+          if (this.currPage < this.totalPages) this.currPage++;
+        },
+
+        prevSet() {
+          this.setCurrentPage(1);
+        },
+
+        nextSet() {
+          this.setCurrentPage(this.totalPages);
+        },
+
+        updatePagination() {
+          this.currPage = 1;
+        },
+      }));
+    });
+  </script>
+
+</body>
+
+</html>

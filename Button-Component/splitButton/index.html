@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Button Component - SplitButton</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</head>
+
+<body class="bg-black text-white">
+  <h1 class="text-5xl font-bold text-center my-5">Split Button</h1>
+  <div x-data="splitButton">
+    <div class="max-w-lg w-full bg-[#27272b] p-10 mx-auto rounded-lg font-semibold" x-show="type == 'basic'">
+      <div class="relative btns flex justify-center">
+        <button @click="notify('save')"
+          class="flex items-center gap-2 bg-white text-black hover:bg-white/80 transition-all duration-300 font-semibold px-2 py-2 rounded-md rounded-r-none">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+            stroke="currentColor" class="size-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+          </svg>
+          <span>Save</span>
+        </button>
+        <div>
+          <button @click="dropdown = !dropdown"
+            class=" bg-white text-black hover:bg-white/80 transition-all duration-300 font-semibold px-2 py-2 rounded-md rounded-l-none">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+              stroke="currentColor" class="size-6">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.325.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.431l-1.003.827c-.293.241-.438.613-.43.992a7.723 7.723 0 0 1 0 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.955.26 1.43l-1.298 2.247a1.125 1.125 0 0 1-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 0 1-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.94-1.11.94h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 0 1-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 0 1-1.369-.49l-1.297-2.247a1.125 1.125 0 0 1 .26-1.431l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 0 1 0-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 0 1-.26-1.43l1.297-2.247a1.125 1.125 0 0 1 1.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28Z" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+            </svg>
+          </button>
+        </div>
+        <div x-show="dropdown" x-transition:enter.duration.500ms x-transition:leave.duration.500ms
+          class="absolute top-[40px] bg-black border border-[#545454] left-[36%] -translate-1/2 flex flex-col rounded-md overflow-auto max-w-[180px] w-full p-1">
+          <button @click="notify('update')"
+            class="flex justify-start gap-2 items-center bg-black text-white rounded-md py-1.5 px-2 hover:bg-[#2b2b2b] transition-all duration-150 ">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+              stroke="currentColor" class="size-6">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
+            </svg>
+            <span>Update</span>
+          </button>
+          <button @click="notify('delete')"
+            class="flex justify-start gap-2 items-center bg-black text-white rounded-md py-1.5 px-2 hover:bg-[#2b2b2b] transition-all duration-150 ">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+              stroke="currentColor" class="size-6">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+            </svg>
+            <span>Delete</span>
+          </button>
+          <hr class="border-t border-[#545454]">
+          <button @click="notify('quit')"
+            class="flex justify-start gap-2 items-center bg-black text-white rounded-md py-1.5 px-2 hover:bg-[#2b2b2b] transition-all duration-150 ">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+              stroke="currentColor" class="size-6">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M5.636 5.636a9 9 0 1 0 12.728 0M12 3v9" />
+            </svg>
+            <span>Quit</span>
+          </button>
+        </div>
+      </div>
+      <div class="space-y-2 absolute top-5 right-5 max-w-[250px] w-full">
+        <template x-for="notification in notifications" :key="notification.id">
+          <div
+            class="relative text-white p-2 flex flex-col justify-between items-center rounded-md backdrop-blur-lg border border-white/20 shadow-lg"
+            :class="{
+            'bg-green-500': notification.message.includes('save'),
+            'bg-red-500': notification.message.includes('delete'),
+            'bg-yellow-300': notification.message.includes('update'),
+            'bg-gray-300': notification.message.includes('quit'),
+          }">
+            <div class="w-full">
+              <h3 class="font-bold text-md" x-text="notification.title"></h3>
+              <p x-text="notification.message" class="text-sm"></p>
+            </div>
+            <button @click="closeNotification(notification.id)"
+              class="absolute right-2 text-white top-1 text-gray-400 hover:text-gray-200">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                stroke="currentColor" class="size-6 text-white hover:text-white/70 transition-all">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+        </template>
+
+      </div>
+    </div>
+
+    <div class="max-w-lg w-full bg-[#27272b] p-10 mx-auto rounded-lg font-semibold" x-show="type == 'nested'"
+      @click.outside="dropdown = false">
+      <div class="relative btns flex justify-center">
+        <button
+          class="bg-white text-black hover:bg-white/80 transition-all duration-300 font-semibold pr-2 pl-4 py-2 rounded-md rounded-r-none">
+          <span>Save</span>
+        </button>
+        <div>
+          <button @click="dropdown = !dropdown"
+            class=" bg-white text-black hover:bg-white/80 transition-all duration-300 font-semibold px-2 py-2 rounded-md rounded-l-none">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+              stroke="currentColor" class="size-6">
+              <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+            </svg>
+          </button>
+        </div>
+        <div x-show="dropdown" x-transition:enter.duration.500ms x-transition:leave.duration.500ms
+          class="absolute top-[40px] bg-black border border-[#545454] left-[38%] -translate-1/2 flex flex-col rounded-md  max-w-[180px] w-full p-1">
+          <div class="relative">
+            <button @click="fileUploadDrop"
+              class="  w-full flex justify-between items-center bg-black text-white rounded-md py-1.5 px-2 hover:bg-[#2b2b2b] transition-all duration-150 ">
+              <div class="flex  items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                  stroke="currentColor" class="size-6">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
+                </svg>
+                <span>File</span>
+              </div>
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                stroke="currentColor" class="size-4">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+              </svg>
+            </button>
+            <div class="flex absolute top-0 left-0 bg-black border border-[#545454] left-[100%] -translate-1/2 flex-col rounded-md 
+              max-w-[180px] w-full p-1" x-show="fileUpload">
+              <div class="relative group">
+                <button
+                  class=" w-full flex justify-between items-center bg-black text-white rounded-md py-1.5 px-2 hover:bg-[#2b2b2b] transition-all duration-150 ">
+                  <div class="flex  items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                      stroke="currentColor" class="size-6">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                    </svg>
+                    <span>New</span>
+                  </div>
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="size-4">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                  </svg>
+                </button>
+                <div class="hidden group-hover:block absolute top-0 left-0 bg-black border border-[#545454] left-[100%] -translate-1/2 flex flex-col rounded-md 
+              max-w-[180px] w-full p-1">
+                  <button
+                    class=" w-full flex justify-between items-center bg-black text-white rounded-md py-1.5 px-2 hover:bg-[#2b2b2b] transition-all duration-150 ">
+                    <div class="flex  items-center gap-2">
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor" class="size-6">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                          d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
+                      </svg>
+                      <span>Document</span>
+                    </div>
+                  </button>
+                  <button
+                    class=" w-full flex justify-between items-center bg-black text-white rounded-md py-1.5 px-2 hover:bg-[#2b2b2b] transition-all duration-150 ">
+                    <div class="flex  items-center gap-2">
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor" class="size-6">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                          d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
+                      </svg>
+                      <span>Image</span>
+                    </div>
+                  </button>
+                  <button
+                    class=" w-full flex justify-between items-center bg-black text-white rounded-md py-1.5 px-2 hover:bg-[#2b2b2b] transition-all duration-150 ">
+                    <div class="flex  items-center gap-2">
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor" class="size-6">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                          d="m15.75 10.5 4.72-4.72a.75.75 0 0 1 1.28.53v11.38a.75.75 0 0 1-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25h-9A2.25 2.25 0 0 0 2.25 7.5v9a2.25 2.25 0 0 0 2.25 2.25Z" />
+                      </svg>
+                      <span>Video</span>
+                    </div>
+                  </button>
+
+                </div>
+              </div>
+              <button
+                class=" w-full flex justify-between items-center bg-black text-white rounded-md py-1.5 px-2 hover:bg-[#2b2b2b] transition-all duration-150 ">
+                <div class="flex  items-center gap-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="size-6">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M3.75 9.776c.112-.017.227-.026.344-.026h15.812c.117 0 .232.009.344.026m-16.5 0a2.25 2.25 0 0 0-1.883 2.542l.857 6a2.25 2.25 0 0 0 2.227 1.932H19.05a2.25 2.25 0 0 0 2.227-1.932l.857-6a2.25 2.25 0 0 0-1.883-2.542m-16.5 0V6A2.25 2.25 0 0 1 6 3.75h3.879a1.5 1.5 0 0 1 1.06.44l2.122 2.12a1.5 1.5 0 0 0 1.06.44H18A2.25 2.25 0 0 1 20.25 9v.776" />
+                  </svg>
+                  <span>Open</span>
+                </div>
+              </button>
+              <button
+                class=" w-full flex justify-between items-center bg-black text-white rounded-md py-1.5 px-2 hover:bg-[#2b2b2b] transition-all duration-150 ">
+                <div class="flex  items-center gap-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="size-6">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M6.72 13.829c-.24.03-.48.062-.72.096m.72-.096a42.415 42.415 0 0 1 10.56 0m-10.56 0L6.34 18m10.94-4.171c.24.03.48.062.72.096m-.72-.096L17.66 18m0 0 .229 2.523a1.125 1.125 0 0 1-1.12 1.227H7.231c-.662 0-1.18-.568-1.12-1.227L6.34 18m11.318 0h1.091A2.25 2.25 0 0 0 21 15.75V9.456c0-1.081-.768-2.015-1.837-2.175a48.055 48.055 0 0 0-1.913-.247M6.34 18H5.25A2.25 2.25 0 0 1 3 15.75V9.456c0-1.081.768-2.015 1.837-2.175a48.041 48.041 0 0 1 1.913-.247m10.5 0a48.536 48.536 0 0 0-10.5 0m10.5 0V3.375c0-.621-.504-1.125-1.125-1.125h-8.25c-.621 0-1.125.504-1.125 1.125v3.659M18 10.5h.008v.008H18V10.5Zm-3 0h.008v.008H15V10.5Z" />
+                  </svg>
+                  <span>Print</span>
+                </div>
+              </button>
+            </div>
+          </div>
+          <div class="relative">
+            <button @click="editDrop"
+              class=" w-full flex justify-between items-center bg-black text-white rounded-md py-1.5 px-2 hover:bg-[#2b2b2b] transition-all duration-150 ">
+              <div class="flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                  stroke="currentColor" class="size-6">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                    d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
+                </svg>
+                <span>Edit</span>
+              </div>
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                stroke="currentColor" class="size-4">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+              </svg>
+            </button>
+            <div x-show="editDropdown"
+              class="absolute top-[-40px] bg-black border border-[#545454] left-[100%] -translate-1/2 flex flex-col rounded-md  max-w-[180px] w-full p-1">
+              <button
+                class=" w-full flex justify-between items-center bg-black text-white rounded-md py-1.5 px-2 hover:bg-[#2b2b2b] transition-all duration-150 ">
+                <div class="flex items-center gap-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="size-6">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                      d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
+                  </svg>
+                  <span>Copy</span>
+                </div>
+              </button>
+              <button
+                class=" w-full flex justify-between items-center bg-black text-white rounded-md py-1.5 px-2 hover:bg-[#2b2b2b] transition-all duration-150 ">
+                <div class="flex items-center gap-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="size-6">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                      d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                  </svg>
+                  <span>Delete</span>
+                </div>
+              </button>
+            </div>
+          </div>
+          <button
+            class="flex justify-start gap-2 items-center bg-black text-white rounded-md py-1.5 px-2 hover:bg-[#2b2b2b] transition-all duration-150 ">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+              stroke="currentColor" class="size-6">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+            </svg>
+            <span>Search</span>
+          </button>
+          <hr class="border-t border-[#545454]">
+          <div class="realtive">
+            <button @click="shareDropdown"
+              class="flex justify-between items-center w-full bg-black text-white rounded-md py-1.5 px-2 hover:bg-[#2b2b2b] transition-all duration-150 ">
+              <div class="flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                  stroke="currentColor" class="size-6">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M7.217 10.907a2.25 2.25 0 1 0 0 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186 9.566-5.314m-9.566 7.5 9.566 5.314m0 0a2.25 2.25 0 1 0 3.935 2.186 2.25 2.25 0 0 0-3.935-2.186Zm0-12.814a2.25 2.25 0 1 0 3.933-2.185 2.25 2.25 0 0 0-3.933 2.185Z" />
+                </svg>
+                <span>Share</span>
+              </div>
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                stroke="currentColor" class="size-4">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+              </svg>
+            </button>
+            <div x-show="shareDrop"
+              class="absolute bottom-[-40px] bg-black border border-[#545454] left-[100%] -translate-1/2 flex flex-col rounded-md  max-w-[180px] w-full p-1">
+              <button
+                class="flex justify-between items-center bg-black text-white rounded-md py-1.5 px-2 hover:bg-[#2b2b2b] transition-all duration-150 ">
+                <div class="flex items-center gap-2">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <g id="SVGRepo_bgCarrier" stroke-width="0" />
+                    <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" />
+                    <g id="SVGRepo_iconCarrier">
+                      <path fill-rule="evenodd" clip-rule="evenodd"
+                        d="M13 10C13 11.1046 13.8954 12 15 12C16.1046 12 17 11.1046 17 10V5C17 3.89543 16.1046 3 15 3C13.8954 3 13 3.89543 13 5V10ZM5 8C3.89543 8 3 8.89543 3 10C3 11.1046 3.89543 12 5 12H10C11.1046 12 12 11.1046 12 10C12 8.89543 11.1046 8 10 8H5ZM15 13C13.8954 13 13 13.8954 13 15C13 16.1046 13.8954 17 15 17H20C21.1046 17 22 16.1046 22 15C22 13.8954 21.1046 13 20 13H15ZM10 22C8.89543 22 8 21.1046 8 20L8 15C8 13.8954 8.89543 13 10 13C11.1046 13 12 13.8954 12 15V20C12 21.1046 11.1046 22 10 22ZM8 5C8 3.89543 8.89543 3 10 3C11.1046 3 12 3.89543 12 5V7H10C8.89543 7 8 6.10457 8 5ZM3 15C3 16.1046 3.89543 17 5 17C6.10457 17 7 16.1046 7 15V13H5C3.89543 13 3 13.8954 3 15ZM17 20C17 21.1046 16.1046 22 15 22C13.8954 22 13 21.1046 13 20V18H15C16.1046 18 17 18.8954 17 20ZM22 10C22 8.89543 21.1046 8 20 8C18.8954 8 18 8.89543 18 10V12H20C21.1046 12 22 11.1046 22 10Z"
+                        fill="#ffffff" />
+                    </g>
+                  </svg>
+                  <span>Slack</span>
+                </div>
+              </button>
+              <button
+                class="flex justify-between items-center bg-black text-white rounded-md py-1.5 px-2 hover:bg-[#2b2b2b] transition-all duration-150 ">
+                <div class="flex items-center gap-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" shape-rendering="geometricPrecision"
+                    text-rendering="geometricPrecision" image-rendering="optimizeQuality" fill-rule="evenodd"
+                    clip-rule="evenodd" viewBox="0 0 510 512.459">
+                    <path fill="#ffffff"
+                      d="M435.689 74.468C387.754 26.471 324 .025 256.071 0 116.098 0 2.18 113.906 2.131 253.916c-.024 44.758 11.677 88.445 33.898 126.946L0 512.459l134.617-35.311c37.087 20.238 78.85 30.891 121.345 30.903h.109c139.949 0 253.88-113.917 253.928-253.928.024-67.855-26.361-131.645-74.31-179.643v-.012zm-179.618 390.7h-.085c-37.868-.011-75.016-10.192-107.428-29.417l-7.707-4.577-79.886 20.953 21.32-77.889-5.017-7.987c-21.125-33.605-32.29-72.447-32.266-112.322.049-116.366 94.729-211.046 211.155-211.046 56.373.025 109.364 22.003 149.214 61.903 39.853 39.888 61.781 92.927 61.757 149.313-.05 116.377-94.728 211.058-211.057 211.058v.011zm115.768-158.067c-6.344-3.178-37.537-18.52-43.358-20.639-5.82-2.119-10.044-3.177-14.27 3.178-4.225 6.357-16.388 20.651-20.09 24.875-3.702 4.238-7.403 4.762-13.747 1.583-6.343-3.178-26.787-9.874-51.029-31.487-18.86-16.827-31.597-37.598-35.297-43.955-3.702-6.355-.39-9.789 2.775-12.943 2.849-2.848 6.344-7.414 9.522-11.116s4.225-6.355 6.343-10.581c2.12-4.238 1.06-7.937-.522-11.117-1.584-3.177-14.271-34.409-19.568-47.108-5.151-12.37-10.385-10.69-14.269-10.897-3.703-.183-7.927-.219-12.164-.219s-11.105 1.582-16.925 7.939c-5.82 6.354-22.209 21.709-22.209 52.927 0 31.22 22.733 61.405 25.911 65.642 3.177 4.237 44.745 68.318 108.389 95.812 15.135 6.538 26.957 10.446 36.175 13.368 15.196 4.834 29.027 4.153 39.96 2.52 12.19-1.825 37.54-15.353 42.824-30.172 5.283-14.818 5.283-27.529 3.701-30.172-1.582-2.641-5.819-4.237-12.163-7.414l.011-.024z" />
+                  </svg>
+                  <span>Whatsapp</span>
+                </div>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener("alpine:init", () => {
+      Alpine.data("splitButton", () => ({
+        notifications: [],
+        dropdown: false,
+        fileUpload: false,
+        editDropdown: false,
+        shareDrop: false,
+        type: "basic",  //basic, nested
+
+        fileUploadDrop() {
+          this.fileUpload = !this.fileUpload;
+          this.editDropdown = false
+          this.shareDrop = false
+        },
+        editDrop() {
+          this.editDropdown = !this.editDropdown;
+          this.fileUpload = false
+          this.shareDrop = false
+        },
+        shareDropdown() {
+          this.shareDrop = !this.shareDrop;
+          this.fileUpload = false
+          this.editDropdown = false
+        },
+
+        notify(action) {
+          let title = "";
+          let message = "";
+
+          switch (action) {
+            case "save":
+              title = "Success";
+              message = "Data saved";
+              break;
+            case "update":
+              title = "Update";
+              message = "Data updated";
+              break;
+            case "delete":
+              title = "Delete";
+              message = "Data deleted";
+              break;
+            case "quit":
+              title = "Quit";
+              message = "Exiting...";
+              break;
+            default:
+              title = "Notification";
+              message = "Action not recognized.";
+          }
+
+          const notification = {
+            id: Date.now(),
+            title: title,
+            message: message,
+          };
+
+          this.notifications.push(notification);
+
+          setTimeout(() => {
+            this.closeNotification(notification.id);
+          }, 3000);
+
+          this.dropdown = false;
+        },
+
+        closeNotification(id) {
+          this.notifications = this.notifications.filter(notification => notification.id !== id);
+        }
+      }));
+    });
+  </script>
+
+
+</body>
+
+</html>

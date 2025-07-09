@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Confirm Popup - Panel Component</title>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-black text-white">
+  <div x-data="confirmPopup" class="relative">
+    <!-- Notification Section -->
+    <div class="fixed space-y-3 top-5 right-5 max-w-72 w-full z-50">
+      <template x-for="(notif, index) in notifications" :key="index">
+        <div class="max-w-72 w-full p-3 rounded-md shadow-lg flex justify-between items-center relative"
+          :class="notif.title === 'Confirmed' ? 'bg-blue-500/70 text-white' : 'bg-green-500/70 text-white'">
+          <div>
+            <h3 class="font-bold" x-text="notif.title"></h3>
+            <p x-text="notif.text"></p>
+          </div>
+          <button @click="removeNotification(index)" class="text-xl absolute top-3 right-3">&times;</button>
+        </div>
+      </template>
+    </div>
+
+    <!-- Page Title -->
+    <h1 class="text-center text-4xl font-bold underline underline-offset-4 my-5" x-text="title"></h1>
+    <!-- Action Buttons -->
+    <div
+      class="bg-[#272727] relative max-w-5xl h-40 mx-auto my-10 rounded-md flex justify-center items-center gap-x-3 font-semibold">
+      <button @click="openDialogFunc('save')"
+        class="px-3 py-1 border border-[#545454] rounded-md text-white hover:text-white/70 hover:border-white/50 transition-all duration-300">
+        Save
+      </button>
+      <button @click="openDialogFunc('delete')"
+        class="px-3 py-1 border border-red-500 rounded-md text-red-500 hover:text-red-400 hover:border-red-400 transition-all duration-300">
+        Delete
+      </button>
+
+      <!-- Confirm Dialog -->
+      <div class="absolute inset-0 top-[176px] left-72 flex justify-center items-center z-50" x-show="openDialog">
+        <span
+          class="absolute top-[-78px] left-[170px] content-[''] w-0 h-0 border-[10px] border-solid border-transparent border-b-[#18181b]"
+          :class="{'left-[250px]' : confirmButtonText === 'Delete'}"></span>
+        <div class="relative bg-[#18181b] p-5 space-y-5 rounded-lg  max-w-md w-full">
+          <div class="flex items-center gap-2 font-semibold">
+            <span>
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                stroke="currentColor" class="size-5">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
+              </svg>
+            </span>
+            <p x-text="dialogMessage"></p>
+          </div>
+          <div class="flex justify-end items-center gap-2 font-semibold">
+            <button
+              class="px-3 py-1 border border-[#545454] rounded-md text-[#8f8f8f] hover:text-white/70 hover:border-white/50 transition-all duration-300"
+              @click="cancelAction">
+              Cancel
+            </button>
+            <button class="px-3 py-1 rounded-md transition-all duration-300"
+              :class="confirmButtonText === 'Delete' ? 'bg-red-500 text-white hover:bg-red-500/70' : 'bg-white text-black hover:bg-white/70'"
+              @click="confirmAction" x-text="confirmButtonText"></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener("alpine:init", () => {
+      Alpine.data("confirmPopup", () => ({
+        title: 'Confirm Popup - Overlay Component',
+        openDialog: false,
+        initialized: false,
+        dialogTitle: '',
+        dialogMessage: '',
+        confirmButtonText: '',
+        notifications: [],
+        position: 'center',
+
+        openDialogFunc(action) {
+          const dialogData = {
+            save: { title: 'Confirmation', message: 'Are you sure you want to save?', buttonText: 'Save' },
+            delete: { title: 'Danger Zone', message: 'Are you sure you want to delete?', buttonText: 'Delete' }
+          };
+
+          const { title, message, buttonText } = dialogData[action] || {};
+          this.dialogTitle = title;
+          this.dialogMessage = message;
+          this.confirmButtonText = buttonText;
+          this.openDialog = true;
+        },
+        addNotification(title, text) {
+          this.notifications.push({ title, text });
+          setTimeout(() => this.notifications.shift(), 3000);
+        },
+        removeNotification(index) {
+          this.notifications.splice(index, 1);
+        },
+        cancelAction() {
+          this.addNotification('Rejected', 'You have rejected!');
+          this.openDialog = false;
+        },
+        confirmAction() {
+          const message = this.dialogTitle === 'Confirmation'
+            ? 'You have accepted!'
+            : 'Record deleted!';
+          this.addNotification('Confirmed', message);
+          this.openDialog = false;
+        }
+      }));
+    });
+  </script>
+</body>
+
+</html>

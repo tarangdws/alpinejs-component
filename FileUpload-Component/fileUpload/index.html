@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>File Upload Component</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</head>
+
+<body class="bg-black text-white">
+
+  <div x-data="fileUpload" x-init="init()">
+    <h1 x-text="title" class="text-center text-4xl font-bold underline underline-offset-4 my-5"></h1>
+    <!-- notification -->
+    <div x-show="notification" x-transition:enter="transition-all" x-transition:enter-start="opacity-0 scale-0"
+      x-transition:enter-end="opacity-100 scale-100" x-transition:leave="transition-all"
+      x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-0"
+      class="max-w-72 w-full bg-blue-600/70 px-3 py-2 rounded-md fixed top-5 right-4 flex flex-col">
+      <h1 class="title font-semibold text-lg">Success</h1>
+      <p class="msg text-md">File Uploaded</p>
+    </div>
+
+    <!-- type=basic -->
+    <div class="p-10 max-w-7xl mx-auto bg-zinc-900 mt-10 flex flex-col" x-show="type === 'basic'">
+      <label class="p-3 rounded cursor-pointer my-2 flex items-center justify-center" for="customFileBasic"
+        :class="{'border border-red-500 text-red-500' : errMsg === true}">
+        <input type="file" class="sr-only" id="customFileBasic" @change="updateFileName($event)"
+          x-ref="customFileBasic">
+        <div class="flex items-center gap-2">
+          <!-- New Button for selecting files -->
+          <button @click="$refs.customFileBasic.click()"
+            class="font-semibold text-black bg-white px-4 py-1 rounded-md hover:bg-white/80  transition-all duration-300">
+            Choose
+          </button>
+          <span x-text="singleFile ? singleFile : 'No file Chosen'" class="font-semibold"></span>
+        </div>
+      </label>
+      <div class="mx-auto mt-1">
+      </div>
+      <div class="mx-auto mt-1">
+        <button @click="uploadFile"
+          class="font-semibold text-white bg-[#27272A] px-4 py-1 rounded-md hover:bg-[#27272A]/50 hover:text-white/70 transition-all duration-300">
+          Upload
+        </button>
+      </div>
+    </div>
+
+
+
+    <!-- type=auto -->
+    <div class="p-10 max-w-7xl mx-auto bg-zinc-900 mt-10 flex flex-col" x-show="type === 'auto'">
+      <label class="p-3 rounded cursor-pointer my-2 flex items-center justify-center" for="customFileAuto"
+        :class="{'border border-red-500 text-red-500' : errMsg === true} ">
+        <input type="file" class="sr-only" id="customFileAuto"
+          x-on:change="singleFile = Object.values($event.target.files); uploadFile()" x-ref="customFileAuto">
+        <div class="flex items-center gap-2">
+          <button
+            class="flex items-center gap-1 px-3 py-1 bg-white text-black rounded-md hover:bg-white/80 transition-all duration-300 font-semibold"
+            x-on:click="$refs.customFileAuto.click()">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+              stroke="currentColor" class="size-5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+            </svg>
+            <span>Browse</span>
+          </button>
+        </div>
+      </label>
+    </div>
+
+
+    <!-- type=advanced -->
+    <div class="p-10 max-w-7xl mx-auto bg-zinc-900 mt-10 flex flex-col" x-show="type === 'advanced'"
+      @drop.prevent="handleDrop($event)" @dragover.prevent>
+      <input type="file" class="sr-only" multiple id="customFile" x-on:change="handleFiles($event.target.files);"
+        x-ref="customFile">
+      <div class="flex">
+        <button @click="$refs.customFile.click()"
+          class="w-10 h-10 flex items-center justify-center mx-1 rounded-full border-2 border-zinc-500">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+            stroke="currentColor" class="size-5">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
+          </svg>
+        </button>
+        <button class="w-10 h-10 flex items-center justify-center mx-1 rounded-full border-2 border-green-500"
+          @click="handleAdvancedButtonClick()">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+            stroke="currentColor" class="size-6">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M12 16.5V9.75m0 0 3 3m-3-3-3 3M6.75 19.5a4.5 4.5 0 0 1-1.41-8.775 5.25 5.25 0 0 1 10.233-2.33 3 3 0 0 1 3.758 3.848A3.752 3.752 0 0 1 18 19.5H6.75Z" />
+          </svg>
+        </button>
+        <button @click="removeAll"
+          class="w-10 h-10 flex items-center justify-center mx-1 rounded-full border-2 border-red-500">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+            stroke="currentColor" class="size-5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- progressbar -->
+      <div class="progressbar my-5">
+        <div class="bg-gray-200 h-3 w-full rounded-full">
+          <div class="bg-green-400 h-3 rounded-full transition-all"
+            :style="`width: ${calculateProgress()}%; transition: width 0.5s ease;`">
+          </div>
+        </div>
+        <p x-show="errMsg" class="text-red-500 text-sm mt-2">Error: You can only put total files with size of 3 MB!</p>
+      </div>
+
+
+
+      <div class="p-5 rounded cursor-pointer my-2 flex items-center justify-center">
+        <div class="flex flex-col justify-center items-center gap-1" x-show="files && files.length > 0">
+
+          <!-- Pending Files Section Title -->
+          <h2 class="text-xl font-bold my-4" x-show="files.some(file => file.status === 'Pending')">Pending Files</h2>
+          <!-- Pending Files Section -->
+          <div class="grid grid-cols-3">
+            <template x-for="fileObj in files.filter(file => file.status === 'Pending')" :key="fileObj.file.name">
+              <div class="max-w-[320px] w-full flex flex-col items-center">
+                <div class="img max-w-[200px] w-full">
+                  <img :src="isValidFile(fileObj.file) ? URL.createObjectURL(fileObj.file) : ''" alt=""
+                    class="w-full h-[150px] object-cover" x-show="fileObj.file">
+                </div>
+                <p x-text="fileObj.file.name"></p>
+                <p x-text="(fileObj.file.size / 1024).toFixed(2) + ' KB'"></p>
+                <p x-text="fileObj.status" :class="{
+                                        'bg-green-500' :  fileObj.status === 'Completed',
+                                        'bg-yellow-500' :  fileObj.status === 'Pending',
+                                      }"
+                  class="text-center text-lg my-5 text-white px-3 py-1 rounded-md font-semibold">
+                </p>
+                <a @click="removeFiles(fileObj.file)"
+                  class="w-10 h-10 flex items-center justify-center mx-1 rounded-full border-2 border-red-500">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="size-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </a>
+              </div>
+            </template>
+          </div>
+
+          <!-- Completed Files Section Title -->
+          <div class="w-full" x-show="files.some(file => file.status === 'Completed')">
+            <h2 class="text-xl text-center font-bold my-4">Completed Files</h2>
+          </div>
+          <!-- Completed Files Section -->
+          <div class="grid grid-cols-3">
+            <template x-for="fileObj in files.filter(file => file.status === 'Completed')" :key="fileObj.file.name">
+              <div class="max-w-[320px] w-full flex flex-col items-center">
+                <div class="img max-w-[200px] w-full">
+                  <img :src="isValidFile(fileObj.file) ? URL.createObjectURL(fileObj.file) : ''" alt=""
+                    class="w-full h-[150px] object-cover" x-show="fileObj.file">
+                </div>
+                <p x-text="fileObj.file.name"></p>
+                <p x-text="(fileObj.file.size / 1024).toFixed(2) + ' KB'"></p>
+                <p x-text="fileObj.status" :class="{
+                                        'bg-green-500' :  fileObj.status === 'Completed',
+                                        'bg-yellow-500' :  fileObj.status === 'Pending',
+                                      }"
+                  class="text-center text-lg my-5 text-white px-3 py-1 rounded-md font-semibold">
+                </p>
+                <a @click="removeFiles(fileObj.file)"
+                  class="w-10 h-10 flex items-center justify-center mx-1 rounded-full border-2 border-red-500">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="size-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </a>
+              </div>
+            </template>
+          </div>
+        </div>
+
+        <div class="flex flex-col items-center gap-2" x-show="!files || files.length === 0">
+          <button type="button" class="flex">
+            <span class="w-20 h-20 border inline-flex rounded-full flex items-center justify-center">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                stroke="currentColor" class="size-6">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M12 16.5V9.75m0 0 3 3m-3-3-3 3M6.75 19.5a4.5 4.5 0 0 1-1.41-8.775 5.25 5.25 0 0 1 10.233-2.33 3 3 0 0 1 3.758 3.848A3.752 3.752 0 0 1 18 19.5H6.75Z" />
+              </svg>
+            </span>
+          </button>
+          <span>Drag and drop files to upload</span>
+        </div>
+      </div>
+
+    </div>
+
+
+    <script>
+      document.addEventListener("alpine:init", () => {
+        Alpine.data("fileUpload", () => ({
+          title: 'File Upload Component',
+          singleFile: null,
+          files: [],
+          multiFiles: [],
+          notification: false,
+          errMsg: false,
+          type: 'advanced',  //basic, auto, advanced
+          status: 'Pending',
+
+          init() {
+            this.notification = false;
+            this.files = [];
+            this.singleFile = null
+          },
+
+          updateFileName(event) {
+            const selectedFile = event.target.files[0];
+            this.singleFile = selectedFile ? selectedFile.name : null;
+          },
+
+
+
+          uploadFile() {
+            if (this.type === 'advanced') {
+              if (this.files.length > 0) {
+                this.files.forEach((fileObj, index) => {
+                  setTimeout(() => {
+                    fileObj.status = 'Completed';
+                    this.notification = true
+                    this.calculateProgress();
+                  }, 2000);
+                  setTimeout(() => {
+                    this.notification = false
+                  }, 4000)
+                });
+              }
+            }
+            if (this.type === 'basic') {
+              if (!this.singleFile) {
+                this.errMsg = true
+                setTimeout(() => {
+                  this.errMsg = false
+                }, 2000);
+                return
+              }
+              this.notification = true
+              this.singleFile = ''
+              setTimeout(() => {
+                this.notification = false
+              }, 2000);
+            }
+            if (this.type === 'auto') {
+              setTimeout(() => {
+                this.notification = true
+              }, 1000);
+              setTimeout(() => {
+                this.notification = false
+              }, 3000);
+            }
+          },
+
+          removeFiles(file) {
+            this.files = this.files.filter(fileObj => fileObj.file.name !== file.name || fileObj.file.size !== file.size);
+
+            if (this.files.length > 0) {
+              this.files = this.files.map(fileObj => ({
+                ...fileObj,
+                status: fileObj.status === 'Completed' ? 'Completed' : 'Pending'
+              }));
+            }
+          },
+          removeAll() {
+            this.files = []
+          },
+
+
+          handleFiles(files) {
+            const newFiles = Array.from(files);
+            const maxSize = 3 * 1024 * 1024;
+
+            const totalSize = [...this.files, ...newFiles].reduce((sum, file) => sum + file.size, 0);
+            // Check if total size exceeds the limit
+            if (totalSize > maxSize) {
+              if (!this.errMsg) { // Show error message only if it's not already shown
+                this.errMsg = true;
+                setTimeout(() => {
+                  this.errMsg = false; // Hide error message after 2 seconds
+                }, 2000);
+              }
+              return; // Prevent adding files if limit is exceeded
+            } else {
+              this.errMsg = false; // Reset error message if files are valid
+            }
+
+            const existingFiles = this.files.filter(file => file);
+            const updatedFiles = [...existingFiles, ...newFiles.map(file => ({ file, status: 'Pending' }))];
+
+            this.files = updatedFiles;
+
+            if (this.type !== 'advanced') {
+              this.uploadFile();
+            }
+          },
+
+          calculateProgress() {
+            const maxSize = 3 * 1024;
+            const totalSize = this.files.reduce((sum, fileObj) => sum + (fileObj.file.size / 1024), 0);
+
+            return Math.min((totalSize / maxSize) * 100, 100);
+          },
+
+          handleAdvancedButtonClick() {
+            if (this.files && this.files.length > 0) {
+              this.uploadFile();
+            }
+          },
+
+          isValidFile(file) {
+            return file instanceof File;
+          },
+
+          handleDrop(event) {
+            const files = event.dataTransfer.files;
+            this.handleFiles(files);
+          }
+        }))
+      })
+
+    </script>
+
+</body>
+
+</html>
