@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ScrollPanel - Panel Component</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <style>
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 0.5rem;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #3b3b3b;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background-color: #929292;
+      border-radius: 0.25rem;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background-color: #7e8083;
+    }
+  </style>
+</head>
+
+<body class="bg-black text-white">
+  <div x-data="panel" class="p-10 bg-[#18181b]">
+    <h1 x-text="title" class="text-center text-4xl font-bold my-5"></h1>
+    <div>
+      <div :class="{
+        'custom-scrollbar overflow-auto': scrollbar === 'custom',
+        'overflow-auto': scrollbar === 'basic'
+      }" class="data mt-3 text-md bg-black p-5 rounded-md max-h-56">
+        <p>
+          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Iure voluptates repellat, ad incidunt laborum
+          harum officiis, perferendis totam libero doloremque id necessitatibus commodi voluptatibus laboriosam.
+          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Iure voluptates repellat, ad incidunt laborum
+          harum officiis, perferendis totam libero doloremque id necessitatibus commodi voluptatibus laboriosam.
+          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Iure voluptates repellat, ad incidunt laborum
+          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Iure voluptates repellat, ad incidunt laborum
+          harum officiis, perferendis totam libero doloremque id necessitatibus commodi voluptatibus laboriosam.
+          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Iure voluptates repellat, ad incidunt laborum
+          harum officiis, perferendis totam libero doloremque id necessitatibus commodi voluptatibus laboriosam.
+          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Iure voluptates repellat, ad incidunt laborum
+          harum officiis, perferendis totam libero doloremque id necessitatibus commodi voluptatibus laboriosam.
+          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Iure voluptates repellat, ad incidunt laborum
+          harum officiis, perferendis totam libero doloremque id necessitatibus commodi voluptatibus laboriosam.
+          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Iure voluptates repellat, ad incidunt laborum
+          harum officiis, perferendis totam libero doloremque id necessitatibus commodi voluptatibus laboriosam.
+          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Iure voluptates repellat, ad incidunt laborum
+          harum officiis, perferendis totam libero doloremque id necessitatibus commodi voluptatibus laboriosam.
+          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Iure voluptates repellat, ad incidunt laborum
+          harum officiis, perferendis totam libero doloremque id necessitatibus commodi voluptatibus laboriosam.
+          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Iure voluptates repellat, ad incidunt laborum
+          harum officiis, perferendis totam libero doloremque id necessitatibus commodi voluptatibus laboriosam.
+          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Iure voluptates repellat, ad incidunt laborum
+          harum officiis, perferendis totam libero doloremque id necessitatibus commodi voluptatibus laboriosam.
+          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Iure voluptates repellat, ad incidunt laborum
+          harum officiis, perferendis totam libero doloremque id necessitatibus commodi voluptatibus laboriosam.
+          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Iure voluptates repellat, ad incidunt laborum
+          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Iure voluptates repellat, ad incidunt laborum
+          harum officiis, perferendis totam libero doloremque id necessitatibus commodi voluptatibus laboriosam.
+          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Iure voluptates repellat, ad incidunt laborum
+          harum officiis, perferendis totam libero doloremque id necessitatibus commodi voluptatibus laboriosam.
+          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Iure voluptates repellat, ad incidunt laborum
+          harum officiis, perferendis totam libero doloremque id necessitatibus commodi voluptatibus laboriosam.
+          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Iure voluptates repellat, ad incidunt laborum
+          harum officiis, perferendis totam libero doloremque id necessitatibus commodi voluptatibus laboriosam.
+          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Iure voluptates repellat, ad incidunt laborum
+          harum officiis, perferendis totam libero doloremque id necessitatibus commodi voluptatibus laboriosam.
+          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Iure voluptates repellat, ad incidunt laborum
+          harum officiis, perferendis totam libero doloremque id necessitatibus commodi voluptatibus laboriosam.
+          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Iure voluptates repellat, ad incidunt laborum
+          harum officiis, perferendis totam libero doloremque id necessitatibus commodi voluptatibus laboriosam.
+          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Iure voluptates repellat, ad incidunt laborum
+          harum officiis, perferendis totam libero doloremque id necessitatibus commodi voluptatibus laboriosam.
+          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Iure voluptates repellat, ad incidunt laborum
+          harum officiis, perferendis totam libero doloremque id necessitatibus commodi voluptatibus laboriosam.
+          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Iure voluptates repellat, ad incidunt laborum
+          harum officiis, perferendis totam libero doloremque id necessitatibus commodi voluptatibus laboriosam.
+          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Iure voluptates repellat, ad incidunt laborum
+          harum officiis, perferendis totam libero doloremque id necessitatibus commodi voluptatibus laboriosam.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener("alpine:init", () => {
+      Alpine.data("panel", () => ({
+        title: 'ScrollPanel - Panel Component',
+        scrollbar: "custom", // basic, custom
+      }))
+    })
+  </script>
+</body>
+
+</html>

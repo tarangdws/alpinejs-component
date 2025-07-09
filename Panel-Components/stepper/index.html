@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stepper - Panel Component</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/collapse@3.x.x/dist/cdn.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</head>
+
+<body class="bg-black text-white">
+  <div x-data="stepper" x-init="init" class="p-8">
+    <h1 class="text-center text-4xl font-bold underline underline-offset-4 my-5" x-text="title"></h1>
+    <div x-show="orientation === 'horizontal'">
+      <div class="max-w-6xl mx-auto bg-[#18181b] rounded-md px-20 py-10">
+        <div class="head flex justify-between gap-x-5 rounded-md" role="tablist">
+          <template x-for="(head, index) in data">
+            <div
+              :class="index === data.length - 1 ? 'flex items-center gap-5 font-semibold w-max' : 'flex items-center gap-5 font-semibold w-full'">
+              <button @click="currentStep = index" @keydown.enter.prevent="currentStep = index"
+                @keydown.space.prevent="currentStep = index" :tabindex="currentStep === index ? '0' : '-1'"
+                :aria-selected="currentStep === index" role="tab" class="flex items-center gap-2 w-max"
+                :class="currentStep >= index ? 'text-white' : 'text-[#A1A1AA]'">
+                <span x-text="index + 1"
+                  class="border-2 border-[#545454] w-7 h-7 flex justify-center items-center rounded-full"></span>
+                <span x-text="head.title"></span>
+              </button>
+              <span x-show="index < data.length - 1" class="separator flex-[1_1_0] h-0.5"
+                :class="currentStep >= index + 1 ? 'bg-white' : 'bg-[#545454]'"></span>
+            </div>
+          </template>
+        </div>
+        <div
+          class="content border-2 border-[#545454] border-dashed border-spacing-lg p-5 mt-5 bg-black h-48 flex justify-center items-center"
+          role="tabpanel" aria-live="polite">
+          <div class="flex justify-center items-center">
+            <h1 x-text="data[currentStep].content" class="capitalize font-semibold"></h1>
+          </div>
+        </div>
+        <div class="flex mt-5" :class="currentStep >= 1 ? 'justify-between' : 'justify-end'">
+          <button @click="prevStep" x-show="currentStep >= 1"
+            class="flex items-center gap-1 bg-[#27272A] px-3 font-semibold py-1 rounded-md hover:bg-white/20 transition-all duration-300">
+            <span>
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5"
+                stroke="currentColor" class="size-4">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+              </svg>
+            </span>
+            <span>Back</span>
+          </button>
+          <button @click="nextStep" x-show="currentStep < 2"
+            class="flex items-center gap-2 bg-white px-3 font-semibold py-1 rounded-md text-black hover:bg-white/70 transition-all duration-300">
+            <span>Next</span>
+            <span>
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5"
+                stroke="currentColor" class="size-4">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+              </svg>
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div x-show="orientation === 'vertical'">
+      <div class="max-w-6xl mx-auto bg-[#18181b] rounded-md px-20 py-10">
+        <div class="head flex flex-col gap-x-5 rounded-md" role="tablist">
+          <template x-for="(head, index) in data">
+            <div>
+              <div
+                :class="index === data.length - 1 ? 'flex items-center  font-semibold ' : 'flex items-center gap-5 font-semibold w-full'">
+                <button @click="currentStep = index" @keydown.enter.prevent="currentStep = index"
+                  @keydown.space.prevent="currentStep = index" :tabindex="currentStep === index ? '0' : '-1'"
+                  :aria-selected="currentStep === index" role="tab" class="flex items-center gap-2 my-2"
+                  :class="currentStep >= index ? 'text-white' : 'text-[#A1A1AA]'">
+                  <span x-text="index + 1"
+                    class="border-2 border-[#545454] w-7 h-7 flex justify-center items-center rounded-full"></span>
+                  <span x-text="head.title"></span>
+                </button>
+              </div>
+              <div class="flex items-center gap-5 left-0 pl-5 ml-[14px]"
+                :class="index === data.length - 1 ? 'border-0' : 'border-l-2'" x-show="currentStep === index"
+                x-collapse>
+                <div class="flex flex-col w-full gap-4">
+                  <div
+                    class="content w-full border-2 border-[#545454] border-dashed border-spacing-lg p-5 bg-black h-40 flex justify-center items-center"
+                    role="tabpanel" aria-live="polite">
+                    <div class="flex justify-center items-center">
+                      <h1 x-text="head.content" class="capitalize font-semibold"></h1>
+                    </div>
+                  </div>
+                  <div>
+                    <button class="bg-[#27272A] text-white font-semibold px-3 py-1 rounded-md" x-show="currentStep >= 1"
+                      @click="prevStep">Back</button>
+                    <button class="bg-white text-black font-semibold px-3 py-1 rounded-md" x-show="currentStep < 2"
+                      @click="nextStep">Next</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </template>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    document.addEventListener("alpine:init", () => {
+      Alpine.data("stepper", () => ({
+        title: 'Stepper - Panel Component',
+        orientation: window.innerWidth < 768 ? 'vertical' : 'horizontal',
+        currentStep: 0,
+        data: [
+          {
+            id: 'data1',
+            title: 'Header I',
+            content: 'content I'
+          },
+          {
+            id: 'data2',
+            title: 'Header II',
+            content: 'content II'
+          },
+          {
+            id: 'data3',
+            title: 'Header III',
+            content: 'content III'
+          },
+        ],
+        init() {
+          window.addEventListener('resize', () => {
+            this.orientation = window.innerWidth < 768 ? 'vertical' : 'horizontal';
+          });
+        },
+        nextStep() {
+          if (this.currentStep < this.data.length - 1) {
+            this.currentStep++;
+          }
+        },
+        prevStep() {
+          if (this.currentStep > 0) {
+            this.currentStep--;
+          }
+        }
+      }));
+    });
+  </script>
+</body>
+
+</html>
