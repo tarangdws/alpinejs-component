@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Resize - Panel Component</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</head>
+
+<body class="bg-black text-white">
+  <div x-data="splitter" class="p-10">
+    <h1 x-text="title" class="text-center text-4xl font-bold underline underline-offset-4 my-5"></h1>
+    <!-- horizontal -->
+    <div class="flex border-8 bg-white text-black font-semibold h-72" x-show="type === 'horizontal'">
+      <div x-bind:style="'width: ' + leftPanelWidth + 'px;'"
+        class="flex justify-center items-center p-3 bg-black text-white">Left Panel
+      </div>
+      <div class="splitter w-2 bg-blue-700 cursor-col-resize"
+        @mousedown="startResize($event, 'horizontal', 'leftPanelWidth')"></div>
+      <div class="flex flex-grow justify-center items-center p-3 text-nowrap bg-black text-white">Right Panel</div>
+    </div>
+    <!-- vertical -->
+    <div class="flex flex-col border-8 bg-white text-black font-semibold h-72" x-show="type === 'vertical'">
+      <div x-bind:style="'height: ' + topPanelHeight + 'px;'"
+        class="flex justify-center items-center p-3 bg-black text-white">Top Panel
+      </div>
+      <div class="splitter h-2 cursor-row-resize bg-blue-700"
+        @mousedown="startResize($event, 'vertical', 'topPanelHeight')"></div>
+      <div class="flex justify-center flex-grow items-center p-3 bg-black text-white">Bottom Panel</div>
+    </div>
+    <!-- Nested Layout -->
+    <div class="flex border-8 bg-white text-black font-semibold h-96 overflow-hidden" x-show="type === 'nested'">
+      <div :style="'width: ' + panel1Width + 'px;'" class="flex justify-center items-center p-3 bg-black text-white">
+        Panel 1
+      </div>
+      <div class="splitter col w-2 cursor-col-resize bg-blue-600"
+        @mousedown="startResize($event, 'nested-col', 'panel1Width')">
+      </div>
+      <div class="flex flex-col flex-grow">
+        <div :style="'height: ' + panel2Height + 'px;'"
+          class="flex justify-center items-center p-3 bg-black text-white">
+          Panel 2
+        </div>
+        <div class="bg-red-600 splitter row h-2 cursor-row-resize"
+          @mousedown="startResize($event, 'nested-row', 'panel2Height')">
+        </div>
+        <div class="flex flex-grow">
+          <div :style="'width: ' + panel3Width + 'px;'"
+            class="flex justify-center items-center p-3 bg-black text-white">
+            Panel 3
+          </div>
+          <div class="bg-blue-600 splitter col w-2 cursor-col-resize"
+            @mousedown="startResize($event, 'nested-col', 'panel3Width')">
+          </div>
+          <div class="flex justify-center items-center p-3 flex-grow bg-black text-white">Panel 4</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    document.addEventListener('alpine:init', () => {
+      Alpine.data("splitter", () => ({
+        title: "Splitter Panel Component",
+        isDragging: false,
+        startX: 0,
+        startY: 0,
+        startWidth: 0,
+        startHeight: 0,
+        leftPanelWidth: 150,
+        topPanelHeight: 150,
+        panel1Width: 150,
+        panel2Height: 150,
+        panel3Width: 150,
+        type: 'nested', // 'horizontal', 'vertical', or 'nested'
+        size: false,
+        activeSplitter: null,
+        startResize(e, type, panelKey) {
+          this.isDragging = true;
+          this.startX = e.clientX;
+          this.startY = e.clientY;
+          this.activeSplitter = { type, panelKey };
+          if (type === 'horizontal') {
+            this.startWidth = this.leftPanelWidth;
+          } else if (type === 'vertical') {
+            this.startHeight = this.topPanelHeight;
+          } else if (type === 'nested-col') {
+            this.startWidth = this[panelKey];
+          } else if (type === 'nested-row') {
+            this.startHeight = this[panelKey];
+          }
+          const onMouseMove = (e) => this.handleResize(e);
+          const onMouseUp = () => this.stopResize(onMouseMove, onMouseUp);
+          window.addEventListener('mousemove', onMouseMove);
+          window.addEventListener('mouseup', onMouseUp);
+        },
+        handleResize(e) {
+          if (!this.isDragging) return;
+          const { type, panelKey } = this.activeSplitter;
+          const parentRect = document.querySelector('[x-show="type === \'nested\'"]').getBoundingClientRect();
+
+          if (type === 'horizontal') {
+            const delta = e.clientX - this.startX;
+            this.leftPanelWidth = Math.max(150, Math.min(this.startWidth + delta)
+            );
+
+          } else if (type === 'vertical') {
+            const delta = e.clientY - this.startY;
+            this.topPanelHeight = Math.max(100, Math.min(this.startHeight + delta)
+            );
+
+          } else if (type === 'nested-col') {
+            const delta = e.clientX - this.startX;
+            if (panelKey === 'panel1Width') {
+              // Adjust Panel 1 width and prevent it from encroaching into Panel 3
+              this.panel1Width = Math.max(100, Math.min(this.startWidth + delta, parentRect.width - this.panel3Width - 150));
+            } else if (panelKey === 'panel3Width') {
+              // Adjust Panel 3 width and prevent it from affecting Panel 1
+              this.panel3Width = Math.max(100, Math.min(this.startWidth + delta, parentRect.width - this.panel1Width - 150));
+            }
+
+          } else if (type === 'nested-row') {
+            const delta = e.clientY - this.startY;
+            const maxHeight = parentRect.height - 150; // Leave space for other panels
+            this[panelKey] = Math.max(50, Math.min(this.startHeight + delta, maxHeight));
+          }
+        },
+        stopResize(onMouseMove, onMouseUp) {
+          this.isDragging = false;
+          window.removeEventListener('mousemove', onMouseMove);
+          window.removeEventListener('mouseup', onMouseUp);
+        }
+      }));
+    });
+  </script>
+</body>
+
+</html>
