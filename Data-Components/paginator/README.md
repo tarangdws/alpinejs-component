@@ -1,6 +1,0 @@
-![paginator](media/default.png)
-![paginator](media/headless.png)
-![paginator](media/currPageReport.png)
-![paginator](media/customContent.png)
-![paginator](media/template.png)
-![paginator](media/responsive.png)
