@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Popover - Overlay Component</title>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-black text-white" @click="openProduct = null">
+
+  <div x-data="popover">
+    <h1 x-text="title" class="text-center text-4xl font-bold underline underline-offset-4 my-5"></h1>
+    <span x-show="enableCopy && selectData"
+      class="fixed top-5 right-10 bg-green-500/80 text-white font-semibold max-w-[200px] px-3 py-2 w-full rounded-md">
+      Text Copied!
+    </span>
+
+    <div class="bg-[#2c2c2c] p-10 m-auto w-[90%] my-20" x-show="selectData">
+      <div class="relative mx-auto flex justify-center w-auto">
+        <button type="button" @click="popOverOpen = !popOverOpen"
+          class="flex max-w-40 w-full justify-center items-center gap-2 bg-white text-black px-3 py-1 rounded-md font-semibold hover:bg-white/80 transition-all duration-300">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
+            class="size-5" x-show="buttonText === 'Share'">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M7.217 10.907a2.25 2.25 0 1 0 0 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186 9.566-5.314m-9.566 7.5 9.566 5.314m0 0a2.25 2.25 0 1 0 3.935 2.186 2.25 2.25 0 0 0-3.935-2.186Zm0-12.814a2.25 2.25 0 1 0 3.933-2.185 2.25 2.25 0 0 0-3.933 2.185Z" />
+          </svg>
+          <span x-text="buttonText"></span>
+        </button>
+        <div class="absolute top-12 left-[57%] -translate-x-1/2 bg-[#18181b] border border-[#545454] p-3 rounded-md"
+          x-show="popOverOpen" x-transition:enter="transition transform ease-in-out duration-300"
+          x-transition:enter-start="translate-y-[-20px] opacity-0" x-transition:enter-end="translate-y-0 opacity-100"
+          x-transition:leave="transition transform ease-in-out duration-300"
+          x-transition:leave-start="translate-y-[20px] opacity-100"
+          x-transition:leave-end="translate-y-[-20px] opacity-0">
+          <span
+            class="absolute -top-[20px] left-[42px] content-[''] w-0 h-0 border-[10px] border-[#18181b] border-transparent border-b-[#18181b]"></span>
+          <p class="font-semibold mb-2">Share this document</p>
+          <div class="flex items-center border border-[#545454] rounded-md  mb-4">
+            <input type="text"
+              class="copyInput bg-black p-1 rounded-l-md px-3 text-sm font-medium text-white outline-0 placeholder-white min-w-[315px] w-full"
+              placeholder="https://primevue.org/12323ff26t2g243g423g234gg52hy25XADXAG3" readonly
+              value="https://primevue.org/12323ff26t2g243g423g234gg52hy25XADXAG3">
+
+            <button @click="copyToClipboard" type="button"
+              class="copyBtn bg-black border-l border-l-[#545454] p-2 rounded-r-md text-gray-300">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                stroke="currentColor" class="size-5 text-gray-400">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 0 1-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 0 1 1.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 0 0-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 0 1-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 0 0-3.375-3.375h-1.5a1.125 1.125 0 0 1-1.125-1.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H9.75" />
+              </svg>
+            </button>
+          </div>
+          <p class="font-semibold mb-2">Invite Member</p>
+          <div class="flex items-center  mb-4 border border-zinc-600 rounded-md mb-4">
+            <input type="text "
+              class="bg-[#3f3f46] p-1 rounded-l-md px-3 text-white outline-0 placeholder-white min-w-[270px] w-full"
+              disabled>
+            <button
+              class="flex justify-center items-center gap-2 bg-white text-black px-3 py-1 rounded-r-md font-semibold hover:bg-white/80 transition-all duration-300">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                stroke="currentColor" class="size-5">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z" />
+              </svg>
+              <span>Invite</span>
+            </button>
+          </div>
+          <p class="font-semibold mb-1">Team Member</p>
+          <template x-for="( data, index ) in userData">
+            <div class="flex items-center gap-2 my-2 cursor-pointer hover:bg-white/10 rounded-md p-1"
+              @click="selectedName(data.name)">
+              <div class="img">
+                <img :src=data.imgSrc alt="img" width="32" height="32">
+              </div>
+              <div class="flex justify-between items-center w-full">
+                <div class="flex flex-col ">
+                  <span class="name font-semibold text-sm" x-text="data.name"></span>
+                  <span class="email text-xs text-zinc-400" x-text="data.email"></span>
+                </div>
+                <button class="type flex items-center gap-2 text-gray-400 font-semibold">
+                  <span x-text="data.type" class="text-xs"></span>
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                    stroke="currentColor" class="size-4">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                  </svg>
+                </button>
+              </div>
+          </template>
+        </div>
+      </div>
+    </div>
+
+    <div x-data="{ openProduct: null, currentPage: 1 }" class="bg-zinc-900 max-w-7xl mx-auto" x-show="dataTable"
+      @click.outside="openProduct = null">
+      <div class="overflow-visible p-10">
+        <table class="w-full border-spacing-y-4 my-5">
+          <thead>
+            <tr class="text-left border-b border-b-[#545454]">
+              <template x-for="(head, index) in tableHead" :key="index">
+                <th class="py-2 px-1" x-text="head"></th>
+              </template>
+            </tr>
+          </thead>
+          <tbody>
+            <template x-for="(row, index) in tableBody.slice((currPage - 1) * pageSize, currPage * pageSize)"
+              :key="index">
+              <tr class="border-b border-[#545454] rounded-md">
+                <td x-text="row.id" class="py-2 px-1"></td>
+                <td x-text="row.code" class="py-2 px-1"></td>
+                <td x-text="row.name" class="py-2 px-1"></td>
+                <td x-text="row.price" class="py-2 px-1"></td>
+                <td class="py-2 px-1">
+                  <img :src="row.image" alt="Product Image" class="h-10">
+                </td>
+                <td class="py-2 px-1 relative">
+                  <button @click.stop="toggleProduct(row.id)" @click.outside="openProduct = null"
+                    class="text-white text-xl p-2 bg-[#27272A] rounded-full hover:bg-[#27272A]/50 transtion-all duration-300 hover:scale-90">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                      stroke="currentColor" class="size-5">
+                      <path stroke-linecap="round" stroke-linejoin="round"
+                        d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                    </svg>
+                  </button>
+                  <div x-show="openProduct === row.id" x-transition
+                    class="absolute p-3 right-0 top-[70px] bg-black min-w-[245px] w-full z-10">
+                    <div class="img">
+                      <img :src="row.image" alt="image">
+                    </div>
+                    <div class="flex items-center justify-between">
+                      <div class="flex flex-col gap-1 mt-3">
+                        <span class="text-xs text-gray-400 font-semibold">Accessories</span>
+                        <span class="font-semibold" x-text="row.name"></span>
+                      </div>
+                      <div
+                        class="flex justify-between items-center bg-white text-black w-16 px-3 font-semibold py-1 rounded-xl">
+                        <span>4</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                          class="size-6 text-yellow-500">
+                          <path fill-rule="evenodd"
+                            d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.006 5.404.434c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.434 2.082-5.005Z"
+                            clip-rule="evenodd" />
+                        </svg>
+                      </div>
+                    </div>
+                    <div class="flex justify-center gap-2 mt-3">
+                      <button class="flex flex-grow bg-[#838383] px-5 py-1 font-medium rounded-md text-black">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                          stroke="currentColor" class="size-6">
+                          <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
+                        </svg>
+                        <p><span> Buy Now |</span> <span x-text="row.price"></span></p>
+                      </button>
+                      <button class="p-1 w-8 rounded-lg h-8 flex items-center justify-center border border-[#545454]">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                          stroke="currentColor" class="size-6">
+                          <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            </template>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+
+    <!-- pagination -->
+    <div class="bg-[#18181b] text-[#a1a1aa] text-sm p-7" x-show="dataTable">
+      <div class="flex justify-center items-center space-x-2">
+        <div class="btns flex">
+          <button @click="prevSet"
+            class="flex justify-center items-center w-8 h-8 rounded-full hover:bg-white/10 hover:text-white/70 text-sm">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+              stroke="currentColor" class="size-6">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="m18.75 4.5-7.5 7.5 7.5 7.5m-6-15L5.25 12l7.5 7.5" />
+            </svg>
+          </button>
+          <button @click="prevPage"
+            class="flex justify-center items-center w-8 h-8 rounded-full hover:bg-white/10 hover:text-white/70 text-sm">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+              stroke="currentColor" class="size-6">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+            </svg>
+          </button>
+        </div>
+
+        <template x-for="page in visiblePages" :key="page">
+          <div class="numbers">
+            <button @click="setCurrentPage(page)"
+              class="w-8 h-8 text-center rounded-full hover:bg-white hover:text-black transition-all text-sm font-semibold"
+              x-text="page" :class="page === currPage ? 'bg-white text-black' : ''">
+            </button>
+          </div>
+        </template>
+
+        <div class="btns flex">
+          <button @click="nextPage"
+            class="flex justify-center items-center w-8 h-8 rounded-full hover:bg-white/10 hover:text-white/70 text-sm">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+              stroke="currentColor" class="size-6">
+              <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+            </svg>
+          </button>
+          <button @click="nextSet"
+            class="flex justify-center items-center w-8 h-8 rounded-full hover:bg-white/10 hover:text-white/70 text-sm">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+              stroke="currentColor" class="size-6">
+              <path stroke-linecap="round" stroke-linejoin="round" d="m5.25 4.5 7.5 7.5-7.5 7.5m6-15 7.5 7.5-7.5 7.5" />
+            </svg>
+          </button>
+        </div>
+
+      </div>
+
+
+    </div>
+
+  </div>
+
+
+
+  <script>
+    document.addEventListener("alpine:init", () => {
+      Alpine.data("popover", () => ({
+        title: 'Popover - Overlay Component',
+        popOverOpen: false,
+        buttonText: 'Share',
+        enableCopy: false,
+        selectData: false,
+        openProduct: null,
+        dataTable: true,
+        currentPage: 1,
+        basic: true,
+        totalRecords: 0,
+        pageSize: 5,
+        maxVisiblePage: 5,
+        currPage: 1,
+        tableHead: ['Id', 'Code', 'Name', 'Price', 'Image', 'Details'],
+        tableBody: [
+          {
+            id: 1000,
+            code: 'f230fh0g3',
+            name: 'Bamboo Watch',
+            image: 'image/bamboo-watch.jpg',
+            price: '$65',
+          },
+          {
+            id: 1001,
+            code: 'nvklal433',
+            name: 'Black Watch  ',
+            image: 'image/black-watch.jpg',
+            price: '$72',
+          },
+          {
+            id: 1002,
+            code: 'zz21cz3c1',
+            name: 'Blue Band',
+            image: 'image/blue-band.jpg',
+            price: '$79',
+          },
+          {
+            id: 1003,
+            code: '244wgerg2',
+            name: 'Blue T-Shirt',
+            image: 'image/blue-t-shirt.jpg',
+            price: '$29',
+          },
+          {
+            id: 1004,
+            code: 'h456wer53',
+            name: 'Bracelet',
+            image: 'image/bracelet.jpg',
+            price: '$15',
+          },
+          {
+            id: 1005,
+            code: 'av2231fwg',
+            name: 'Brown Purse',
+            image: 'image/brown-purse.jpg',
+            price: '$120',
+          },
+          {
+            id: 1006,
+            code: 'bib36pfvm',
+            name: 'Chakra Bracelet	',
+            image: 'image/chakra-bracelet.jpg',
+            price: '$32',
+          },
+          {
+            id: 1007,
+            code: 'mbvjkgip5',
+            name: 'Galaxy Earrings	',
+            image: 'image/galaxy-earrings.jpg',
+            price: '$34',
+          },
+          {
+            id: 1008,
+            code: 'vbb124btr',
+            name: 'Game Controller	',
+            image: 'image/game-controller.jpg',
+            price: '$99',
+          },
+          {
+            id: 1009,
+            code: 'cm230f032',
+            name: 'Gaming Set	',
+            image: 'image/gaming-set.jpg',
+            price: '$299',
+          },
+        ],
+        userData: [
+          {
+            id: 1,
+            name: 'Amy Elsner',
+            email: 'amy@email.com',
+            imgSrc: 'image/amyelsner.png',
+            type: 'Owner',
+          },
+          {
+            id: 2,
+            name: 'Bernardo Dominic',
+            email: 'bernardo@email.com',
+            imgSrc: 'image/bernardodominic.png',
+            type: 'Editor',
+          },
+          {
+            id: 3,
+            name: 'Ioni Bowcher',
+            email: 'ioni@email.com',
+            imgSrc: 'image/ionibowcher.png',
+            type: 'Viewer',
+          },
+        ],
+
+        selectedName(name) {
+          this.buttonText = name;
+          this.popOverOpen = false
+        },
+
+        copyToClipboard() {
+          const input = document.querySelector(".copyInput");
+          input.select();
+          navigator.clipboard.writeText(input.value).then(() => {
+            this.enableCopy = true
+            setTimeout(() => {
+              this.enableCopy = false
+            }, 2000);
+          }).catch(err => {
+            this.enableCopy = true
+          });
+        },
+
+        toggleProduct(id) {
+          this.openProduct = this.openProduct === id ? null : id;
+        },
+
+
+        get totalPages() {
+          return Math.ceil(this.totalRecords / this.pageSize);
+        },
+
+        get visiblePages() {
+          const half = Math.floor(this.maxVisiblePage / 2);
+          let start = Math.max(this.currPage - half, 1);
+          let end = start + this.maxVisiblePage - 1;
+
+          if (end > this.totalPages) {
+            end = this.totalPages;
+            start = Math.max(end - this.maxVisiblePage + 1, 1);
+          }
+
+          return Array.from({ length: end - start + 1 }, (_, i) => start + i);
+        },
+
+        setCurrentPage(page) {
+          this.currPage = page;
+        },
+
+        prevPage() {
+          if (this.currPage > 1) this.currPage--;
+        },
+
+        nextPage() {
+          if (this.currPage < this.totalPages) this.currPage++;
+        },
+
+        prevSet() {
+          this.setCurrentPage(1);
+        },
+
+        nextSet() {
+          this.setCurrentPage(this.totalPages);
+
+        },
+
+        updatePagination() {
+          this.currPage = 1;
+        },
+
+        init() {
+          this.totalRecords = this.tableBody.length;
+        },
+
+      }))
+    })
+  </script>
+
+</body>
+
+</html>
