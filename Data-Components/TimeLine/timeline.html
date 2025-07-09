@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Data Component - TimeLine</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</head>
+
+<body class="bg-black text-white text-lg">
+
+  <div x-data="timeline" class="">
+    <div x-show="orientation === 'vertical'" class="w-fit m-auto flex flex-col mt-40">
+      <template x-for="(step, index) in steps" :key="index">
+        <div class="flex justify-center items-enter items-start">
+          <!-- Left Label -->
+          <div class="flex flex-col justify-center items-center relative"
+            x-show="labelMode === 'left' || (labelMode === 'alternate' && index % 2 === 0)">
+            <div class="text-right  right-0 w-[100px] absolute mt-3">
+              <strong x-text="step.label"></strong>
+            </div>
+          </div>
+
+          <!-- Timeline Circle and Line -->
+          <div class="flex flex-col justify-center items-center px-5">
+            <span
+              class="inline-block w-3 h-3 rounded-[50%] border-solid border border-white outline outline-1 bg-black"></span>
+            <template x-if="index < steps.length - 1">
+              <span class="w-[1px] h-[100px] border border-solid border-white block"></span>
+            </template>
+          </div>
+
+          <!-- Right Label -->
+          <div class="flex flex-col justify-center items-center relative"
+            x-show="labelMode === 'right' || (labelMode === 'alternate' && index % 2 !== 0)">
+            <div class="text-left left-0 w-[100px] absolute mt-3">
+              <strong x-text="step.label"></strong>
+            </div>
+          </div>
+        </div>
+      </template>
+    </div>
+
+    <div x-show="orientation === 'horizontal'" class="w-fit m-auto flex mt-40">
+      <template x-for="(step, index) in steps" :key="index">
+        <div class="flex flex-col items-start relative">
+          <!-- Top Label -->
+          <div x-show="labelMode === 'top' || (labelMode === 'alternate' && index % 2 === 0)" class="absolute -top-8">
+            <strong x-text="step.label" class="text-center"></strong>
+          </div>
+
+          <!-- Timeline Circle and Line -->
+          <div class="flex items-center">
+            <span class="inline-block w-3 h-3 rounded-full border border-white bg-black"></span>
+            <template x-if="index < steps.length - 1">
+              <span class="h-[1px] w-[200px] border border-solid border-white"></span>
+            </template>
+          </div>
+
+          <!-- Bottom Label -->
+          <div x-show="labelMode === 'bottom' || (labelMode === 'alternate' && index % 2 !== 0)" class="absolute top-4">
+            <strong x-text="step.label" class="text-center"></strong>
+          </div>
+        </div>
+      </template>
+    </div>
+
+
+
+  </div>
+
+
+
+  <script>
+    document.addEventListener('alpine:init', () => {
+      Alpine.data('timeline', () => ({
+        labelMode: 'bottom', // VerticalModes: 'left', 'right', 'alternate', HorizontalModes: 'top', 'bottom', alternate
+        orientation: 'horizontal', // Modes: 'vertical', 'horizontal'
+        steps: [
+          { label: 'Ordered' },
+          { label: 'Processing' },
+          { label: 'Shipped' },
+          { label: 'Delivered' }
+        ],
+      }))
+    })
+  </script>
+
+
+</body>
+
+</html>
