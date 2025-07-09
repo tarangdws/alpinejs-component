@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MeterGroup - Mics Component</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</head>
+
+<body class="bg-black text-white">
+  <div x-data="meterGroup" class="p-5">
+    <h1 x-text="title" class="text-center text-4xl font-bold underline underline-offset-4 my-5 "></h1>
+
+    <!-- basic -->
+    <div class="bg-zinc-900 p-6 max-w-full mx-auto rounded-xl shadow-md space-y-4" x-show="type === 'basic'">
+      <div class="font-semibold">
+        <span>Space used (</span><span x-text="used"></span><span>%)</span>
+      </div>
+      <div class="relative pt-1">
+        <div class="overflow-hidden h-2 text-xs flex rounded bg-zinc-800">
+          <div :style="{ width: used + '%' }"
+            class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-white"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- multiple -->
+    <div class="bg-zinc-900 p-6 max-w-full mx-auto rounded-xl shadow-md space-y-4" x-show="type === 'multiple'">
+      <div class="relative pt-1">
+        <div class="overflow-hidden text-xs rounded bg-zinc-800" :class="{
+          'flex h-2' : !vertical,
+          'h-96 w-2 mx-auto' : vertical
+        }">
+          <template x-for="(data, index) in progressData" :key="index">
+            <div :style="vertical ? { height: data.value + '%' } : { width: data.value + '%' }" :class="data.color"
+              class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-white"></div>
+          </template>
+
+        </div>
+        <div class="font-semibold flex gap-5 mt-5" :class="{'justify-center' : vertical}">
+          <template x-for="(data,index) in progressData" :key="index">
+            <div class="flex items-center gap-3">
+              <span class="flex w-2 h-2 p-1 rounded-full" :class="data.color"></span>
+              <p class="flex gap-2">
+                <span x-text="data.name"></span><span><span x-text="data.value"></span><span>%</span></span>
+              </p>
+            </div>
+          </template>
+        </div>
+      </div>
+    </div>
+
+
+  </div>
+
+  <script>
+    document.addEventListener('alpine:init', () => {
+      Alpine.data('meterGroup', () => ({
+        title: 'MeterGroup - Mics Component',
+        used: 15,
+        progressData: [
+          { name: 'Apps', value: 16, color: 'bg-green-400' },
+          { name: 'Message', value: 8, color: 'bg-yellow-400' },
+          { name: 'Media', value: 24, color: 'bg-blue-400' },
+          { name: 'System', value: 10, color: 'bg-purple-400' },
+        ],
+
+        type: 'multiple',  //basic, multiple
+        vertical: false,
+      }))
+    })
+  </script>
+
+</body>
+
+</html>
